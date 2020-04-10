@@ -13,26 +13,46 @@ public class AnalyticsCounter {
 
 	
 	public static void main(String args[]) throws Exception {
-		ISymptomReader reader = new ReadSymptomDataFromFile("D:\\Project_DA_Java_EN_Come_to_the_Rescue_of_a_Java_Application\\Project02Eclipse\\symptoms.txt");
+		String path = "symptoms.txt";
+		AnalyticsCounter ac = new AnalyticsCounter();
+		List<String> symptomList = ac.read(path);
+		Map<String, Integer> symptomMap = ac.sort(symptomList);
+		ac.write(symptomMap);	
+	}
+	
+	private List<String> read(String path) {
+		
+		ISymptomReader reader = new ReadSymptomDataFromFile(path);
 		List<String> symptomList = reader.getSymptoms();
+		return symptomList;
 		
-		 Map<String,Integer> symptomMap = new TreeMap<>();
-			
-			for (String s : symptomList) {
-				if (symptomMap.get(s) == null) {
-					symptomMap.put(s,0);
-				}
-				int currentValue = symptomMap.get(s);
-				symptomMap.put(s, currentValue +1);
+	}
+	
+	private Map<String, Integer> sort(List<String> symptomList) {
+		
+        Map<String,Integer> symptomMap = new TreeMap<>();
+		
+		for (String s : symptomList) {
+			if (symptomMap.get(s) == null) {
+				symptomMap.put(s,0);
 			}
+			int currentValue = symptomMap.get(s);
+			symptomMap.put(s, currentValue +1);
+		}
+		return symptomMap;
 		
+	}
+	
+	private void write(Map<String, Integer> symptomMap) throws IOException {
 		
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter ("result.out")));
 		
-	        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter ("result.out")));
+		for (Map.Entry<String, Integer> entry : symptomMap.entrySet()) {
+			writer.print(entry.getKey() + " = " + entry.getValue() + System.getProperty("line.separator"));
 			
-			for (Map.Entry<String, Integer> entry : symptomMap.entrySet()) {
-				writer.print(entry.getKey() + " = " + entry.getValue() + System.getProperty("line.separator"));
-				
-			}		
+		}
+		
+		
 		writer.close();
+	}
 }
